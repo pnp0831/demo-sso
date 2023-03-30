@@ -27,17 +27,23 @@ export default NextAuth({
       },
     }),
   ],
-  // callbacks: {
-  //   async signIn({ user, account, profile }) {
-  //     console.log("user", { user, account, profile });
-  //     return true;
-  //   },
-  //   async signOut(a) {
-  //     return true;
-  //   },
-  //   async redirect({ url, baseUrl }) {
-  //     console.log({ url, baseUrl });
-  //     return url;
-  //   },
-  // },
+  cookie: {
+    domain: ".vercel.app",
+  },
+  cookies: {
+    domain: ".vercel.app",
+  },
+  callbacks: {
+    async signIn({ user, account, profile }) {
+      console.log("user", { user, account, profile });
+      return true;
+    },
+    async signOut(a) {
+      return true;
+    },
+    async redirect({ url, baseUrl }) {
+      console.log({ url, baseUrl });
+      return url;
+    },
+  },
 });
