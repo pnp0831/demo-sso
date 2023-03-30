@@ -4,12 +4,13 @@ import GoogleProvider from "next-auth/providers/google";
 
 export default NextAuth({
   providers: [
-    GoogleProvider({
-      clientId: process.env.GOOGLE_CLIENT_ID,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-    }),
+    // GoogleProvider({
+    //   clientId: process.env.GOOGLE_CLIENT_ID,
+    //   clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+    // }),
     CredentialsProvider({
       name: "Credentials",
+      id: process.env.NEXTAUTH_SECRET,
       credentials: {
         email: { label: "Email", type: "text" },
         password: { label: "Password", type: "password" },
@@ -28,13 +29,15 @@ export default NextAuth({
   ],
   callbacks: {
     async signIn({ user, account, profile }) {
+      console.log("user", user);
       return true;
     },
     async signOut(a) {
       return true;
     },
     async redirect({ url, baseUrl }) {
-      return baseUrl;
+      console.log({ url, baseUrl });
+      return url;
     },
   },
 });

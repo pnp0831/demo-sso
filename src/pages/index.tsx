@@ -90,6 +90,7 @@ export default function Home() {
       <button
         style={{ margin: "10px 0" }}
         onClick={() => {
+          console.log("formValue", formValue);
           signIn("credentials", {
             username: formValue.username,
             password: formValue.password,
@@ -102,7 +103,7 @@ export default function Home() {
       <button
         style={{ margin: "10px 0" }}
         onClick={() => {
-          signIn("google", { redirect: false });
+          // signIn("google", { redirect: false });
         }}
       >
         Sign In With Google
