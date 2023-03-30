@@ -23,7 +23,7 @@ export default function Home() {
         <div style={{ margin: "10px 0" }}>
           <button
             onClick={() => {
-              window.open(process.env.LANDING_PAGE_URL, "_blank");
+              window.open(process.env.NEXT_PUBLIC_LANDING_PAGE_URL, "_blank");
             }}
           >
             Go To Landing Page
@@ -58,6 +58,7 @@ export default function Home() {
       }}
     >
       <h1>SSO</h1>
+      <div>{JSON.stringify(process.env)}</div>
       <div style={{ margin: "10px 0" }}>
         <label style={{ marginRight: "10px" }} for="username">
           Username:
@@ -97,6 +98,14 @@ export default function Home() {
         }}
       >
         Sign In
+      </button>
+      <button
+        style={{ margin: "10px 0" }}
+        onClick={() => {
+          signIn("google", { redirect: false });
+        }}
+      >
+        Sign In With Google
       </button>
     </div>
   );
