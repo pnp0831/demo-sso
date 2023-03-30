@@ -4,10 +4,10 @@ import GoogleProvider from "next-auth/providers/google";
 
 export default NextAuth({
   providers: [
-    // GoogleProvider({
-    //   clientId: process.env.GOOGLE_CLIENT_ID,
-    //   clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-    // }),
+    GoogleProvider({
+      clientId: process.env.GOOGLE_CLIENT_ID,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+    }),
     CredentialsProvider({
       name: "Credentials",
       id: process.env.NEXTAUTH_SECRET,
@@ -27,17 +27,17 @@ export default NextAuth({
       },
     }),
   ],
-  callbacks: {
-    async signIn({ user, account, profile }) {
-      console.log("user", user);
-      return true;
-    },
-    async signOut(a) {
-      return true;
-    },
-    async redirect({ url, baseUrl }) {
-      console.log({ url, baseUrl });
-      return url;
-    },
-  },
+  // callbacks: {
+  //   async signIn({ user, account, profile }) {
+  //     console.log("user", { user, account, profile });
+  //     return true;
+  //   },
+  //   async signOut(a) {
+  //     return true;
+  //   },
+  //   async redirect({ url, baseUrl }) {
+  //     console.log({ url, baseUrl });
+  //     return url;
+  //   },
+  // },
 });
