@@ -4,10 +4,6 @@ import GoogleProvider from "next-auth/providers/google";
 
 export default NextAuth({
   providers: [
-    GoogleProvider({
-      clientId: process.env.GOOGLE_CLIENT_ID,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-    }),
     CredentialsProvider({
       name: "Credentials",
       id: process.env.NEXTAUTH_SECRET,
@@ -27,9 +23,6 @@ export default NextAuth({
       },
     }),
   ],
-  cookie: {
-    domain: ".vercel.app",
-  },
   cookies: {
     domain: ".vercel.app",
   },
