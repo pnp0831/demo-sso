@@ -73,5 +73,6 @@ const nextAuthOptions = (req, res) => {
 };
 
 export default (req, res) => {
+  console.log("de", defaultHeaders);
   return NextAuth(req, res, nextAuthOptions(req, res));
 };
