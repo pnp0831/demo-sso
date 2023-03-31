@@ -4,25 +4,32 @@ import GoogleProvider from "next-auth/providers/google";
 
 export default NextAuth({
   providers: [
-    CredentialsProvider({
-      name: "Credentials",
-      id: process.env.NEXTAUTH_SECRET,
-      credentials: {
-        email: { label: "Email", type: "text" },
-        password: { label: "Password", type: "password" },
-      },
-      authorize: async (credentials) => {
-        console.log("credentials", credentials);
-        const user = {
-          ...credentials,
-          name: credentials.username,
-        };
-        // Validate the credentials here
-        // and return the user object if they are valid
-        return user;
-      },
+    GoogleProvider({
+      clientId: process.env.GOOGLE_CLIENT_ID,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
     }),
+    // CredentialsProvider({
+    //   name: "Credentials",
+    //   id: process.env.NEXTAUTH_SECRET,
+    //   credentials: {
+    //     email: { label: "Email", type: "text" },
+    //     password: { label: "Password", type: "password" },
+    //   },
+    //   authorize: async (credentials) => {
+    //     console.log("credentials", credentials);
+    //     const user = {
+    //       ...credentials,
+    //       name: credentials.username,
+    //     };
+    //     // Validate the credentials here
+    //     // and return the user object if they are valid
+    //     return user;
+    //   },
+    // }),
   ],
+  cookie: {
+    domain: ".vercel.app",
+  },
   cookies: {
     domain: ".vercel.app",
   },

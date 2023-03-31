@@ -16,7 +16,7 @@ export default function Home() {
           flexDirection: "column",
         }}
       >
-        Signed in as <strong>{session.user.name}</strong>
+        Signed in as <strong>{session.user.email || session.user.name}</strong>
         <div style={{ margin: "10px 0" }}>
           <button onClick={() => signOut({ redirect: false })}>Signout</button>
         </div>
