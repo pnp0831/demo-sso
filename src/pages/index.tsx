@@ -94,7 +94,7 @@ export default function Home() {
           signIn("credentials", {
             username: formValue.username,
             password: formValue.password,
-            redirect: false,
+            redirect: true,
           });
         }}
       >
@@ -103,7 +103,7 @@ export default function Home() {
       <button
         style={{ margin: "10px 0" }}
         onClick={() => {
-          // signIn("google", { redirect: false });
+          signIn("google");
         }}
       >
         Sign In With Google
