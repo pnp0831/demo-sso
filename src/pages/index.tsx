@@ -2,7 +2,7 @@ import { useSession, signIn, signOut, getCsrfToken } from "next-auth/react";
 import { useState } from "react";
 
 export default function Home() {
-  const { data: session, status } = useSession();
+  const { data: session = {}, status } = useSession();
 
   const [formValue, setFormValue] = useState({});
 
@@ -16,7 +16,8 @@ export default function Home() {
           flexDirection: "column",
         }}
       >
-        Signed in as <strong>{session.user.email || session.user.name}</strong>
+        Signed in as{" "}
+        <strong>{session?.user?.email || session?.user?.name}</strong>
         <div style={{ margin: "10px 0" }}>
           <button onClick={() => signOut({ redirect: false })}>Signout</button>
         </div>
@@ -90,23 +91,14 @@ export default function Home() {
       <button
         style={{ margin: "10px 0" }}
         onClick={() => {
-          console.log("formValue", formValue);
           signIn("credentials", {
             username: formValue.username,
             password: formValue.password,
-            redirect: true,
+            redirect: false,
           });
         }}
       >
-        Sign In hehe
-      </button>
-      <button
-        style={{ margin: "10px 0" }}
-        onClick={() => {
-          signIn("google");
-        }}
-      >
-        Sign In With Google
+        Sign In
       </button>
     </div>
   );

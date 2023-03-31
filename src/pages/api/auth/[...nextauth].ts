@@ -1,43 +1,77 @@
-// Cài đặt next-auth và sử dụng strategy Google
-// npm install next-auth google
-// pages/api/auth/[...nextauth].js
 import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
-import GoogleProvider from "next-auth/providers/google";
-import WorkOSProvider from "next-auth/providers/workos";
+import request, { setToken, defaultHeaders } from "~/helpers/axios";
+import Cookies from "cookies";
 
-export default NextAuth({
-  providers: [
-    GoogleProvider({
-      clientId: process.env.GOOGLE_CLIENT_ID,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-    }),
-  ],
-  cookies: {
-    domain: ".vercel.app",
-  },
-  callbacks: {
-    async signIn({ user, account, profile }) {
-      return true;
-    },
-    async signOut(a) {
-      return true;
-    },
-    async redirect({ url, baseUrl }) {
-      return url;
-    },
-    async session({ session, token, user }) {
-      const a = await fetch(
-        `${process.env.NEXTAUTH_URL}/api/auth/session`
-      ).then((res) => res.json());
+const nextAuthOptions = (req, res) => {
+  return {
+    providers: [
+      CredentialsProvider({
+        id: process.env.NEXTAUTH_SECRET,
+        name: "Credentials",
+        credentials: {
+          username: { label: "Username", type: "text", placeholder: "jsmith" },
+          password: { label: "Password", type: "password" },
+        },
+        async authorize(credentials, req) {
+          const { user, accessToken } = await request.post(
+            `${process.env.NEXT_PUBLIC_AUTH_URL}/api/auth/signin`,
+            {
+              username: credentials?.username,
+              password: credentials?.password,
+            }
+          );
 
-      console.log("A", a);
+          try {
+            setToken(accessToken);
+          } catch (e) {
+            console.log("e", e);
+          }
 
-      // Send properties to the client, like an access_token and user id from a provider.
-      // session.accessToken = token.accessToken;
-      // session.user.id = token.id;
-
-      return a;
+          return user;
+        },
+      }),
+    ],
+    async jwt({ token, user, account, profile, isNewUser }) {
+      return token;
     },
-  },
-});
+    events: {
+      async signOut({ session, token }) {
+        await request.post(
+          `${process.env.NEXT_PUBLIC_AUTH_URL}/api/auth/signout`,
+          {},
+          {
+            headers: defaultHeaders,
+          }
+        );
+        setToken();
+      },
+    },
+    callbacks: {
+      async signIn({ user, account, profile }) {
+        return true;
+      },
+      async session({ session, token }) {
+        const { user } = await request.get(
+          `${process.env.NEXT_PUBLIC_AUTH_URL}/api/auth/session`,
+          {
+            headers: defaultHeaders,
+          }
+        );
+
+        if (user?.id) {
+          return { user };
+        }
+
+        return null;
+      },
+      async redirect({ url, baseUrl }) {
+        return url;
+      },
+    },
+  };
+};
+
+export default (req, res) => {
+  return NextAuth(req, res, nextAuthOptions(req, res));
+};
