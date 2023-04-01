@@ -1,15 +1,13 @@
 import "~/styles/globals.css";
 import type { AppProps } from "next/app";
-import { SessionProvider } from "next-auth/react";
+// import { SessionProvider } from "next-auth/react";
+
+import { UserProvider as SessionProvider } from "@auth0/nextjs-auth0/client";
 import { useEffect } from "react";
 
-export default function App({
-  Component,
-  pageProps: { session, ...pageProps },
-}) {
-  console.log("app 1", session);
+export default function App({ Component, pageProps }) {
   return (
-    <SessionProvider session={session}>
+    <SessionProvider>
       <Component {...pageProps} />
     </SessionProvider>
   );

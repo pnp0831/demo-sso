@@ -1,64 +1,24 @@
-import { useSession, signIn, signOut, getCsrfToken } from "next-auth/react";
+import { useUser } from "@auth0/nextjs-auth0/client";
 import { useEffect, useState } from "react";
+import { useRouter } from "next/router";
 
 export default function Home() {
-  const { data: session = {}, status } = useSession();
+  const router = useRouter();
+  const { user, error, isLoading } = useUser();
 
-  // const session = {};
-  // const status = "";
+  console.log({ user, error, isLoading });
 
-  const [formValue, setFormValue] = useState({});
-
-  useEffect(() => {
-    window.addEventListener("message", function (event) {
-      // Kiểm tra xem thông điệp được gửi từ iframe cha
-      // Xử lý thông điệp được gửi từ iframe cha
-      // console.log(event.data);
-    });
-  }, []);
-
-  if (status === "authenticated") {
+  if (isLoading) return <div>Loading...</div>;
+  if (error) return <div>{error.message}</div>;
+  if (user)
     return (
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          flexDirection: "column",
-        }}
-      >
-        Signed in as{" "}
-        <strong>{session?.user?.email || session?.user?.name}</strong>
-        <div style={{ margin: "10px 0" }}>
-          <button onClick={() => signOut({ redirect: false })}>Signout</button>
-        </div>
-        <div style={{ margin: "10px 0" }}>
-          <button
-            onClick={() => {
-              window.open(process.env.NEXT_PUBLIC_LANDING_PAGE_URL, "_blank");
-            }}
-          >
-            Go To Landing Page
-          </button>
-        </div>
+      <div>
+        <img src={user.picture} alt={user.name} />
+        <h2>{user.name}</h2>
+        <p>{user.email}</p>
+        <button onClick={() => router.push("/api/auth/logout")}>Logout</button>
       </div>
     );
-  }
-
-  if (status === "loading") {
-    return (
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          flexDirection: "column",
-        }}
-      >
-        Loading...
-      </div>
-    );
-  }
 
   return (
     <div
@@ -70,48 +30,8 @@ export default function Home() {
       }}
     >
       <h1>Sign In</h1>
-      {/* <div style={{ margin: "10px 0" }}>
-        <label style={{ marginRight: "10px" }} for="username">
-          Username:
-        </label>
-        <input
-          type="text"
-          id="username"
-          name="username"
-          value={formValue.username}
-          onChange={(e) =>
-            setFormValue({ ...formValue, username: e.target.value })
-          }
-        />
-      </div>
-      <div style={{ margin: "10px 0" }}>
-        <label style={{ marginRight: "10px" }} for="password">
-          Password:
-        </label>
-        <input
-          type="password"
-          id="password"
-          name="password"
-          value={formValue.password}
-          onChange={(e) =>
-            setFormValue({ ...formValue, password: e.target.value })
-          }
-        />
-      </div> */}
-      <button
-        style={{ margin: "10px 0" }}
-        onClick={() => {
-          // window.location.href = `${process.env.NEXT_PUBLIC_AUTH_URL}/auth/signin?callbackUrl=${window.location.href}`;
-          // signIn("credentials", {
-          //   username: formValue.username,
-          //   password: formValue.password,
-          //   redirect: false,
-          // });
-          signIn();
-        }}
-      >
-        Sign In
-      </button>
+
+      <button onClick={() => router.push("/api/auth/login")}>Login</button>
     </div>
   );
 }
