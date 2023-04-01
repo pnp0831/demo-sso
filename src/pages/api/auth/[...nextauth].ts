@@ -6,11 +6,17 @@ import { serialize, parse } from "cookie";
 import config from "~/constants/config";
 import cookies from "next-cookies";
 import { NextApiRequest, NextApiResponse } from "next";
+import Auth0Provider from "next-auth/providers/auth0";
 
 const nextAuthOptions = (req: NextApiRequest, res: NextApiResponse) => {
   return {
     secret: process.env.NEXTAUTH_SECRET,
     providers: [
+      Auth0Provider({
+        clientId: process.env.AUTH0_CLIENT_ID,
+        clientSecret: process.env.AUTH0_CLIENT_SECRET,
+        issuer: process.env.AUTH0_ISSUER,
+      }),
       GoogleProvider({
         clientId: process.env.GOOGLE_CLIENT_ID,
         clientSecret: process.env.GOOGLE_CLIENT_SECRET,
