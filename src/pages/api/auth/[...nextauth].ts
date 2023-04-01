@@ -1,20 +1,20 @@
-import NextAuth from 'next-auth';
-import CredentialsProvider from 'next-auth/providers/credentials';
-import request, { setToken, defaultHeaders } from '~/helpers/axios';
-import { serialize, parse } from 'cookie';
-import config from '~/constants/config';
-import cookies from 'next-cookies';
-import { NextApiRequest, NextApiResponse } from 'next';
+import NextAuth from "next-auth";
+import CredentialsProvider from "next-auth/providers/credentials";
+import request, { setToken, defaultHeaders } from "~/helpers/axios";
+import { serialize, parse } from "cookie";
+import config from "~/constants/config";
+import cookies from "next-cookies";
+import { NextApiRequest, NextApiResponse } from "next";
 
 const nextAuthOptions = (req: NextApiRequest, res: NextApiResponse) => {
   return {
     providers: [
       CredentialsProvider({
         id: process.env.NEXTAUTH_SECRET,
-        name: 'Credentials',
+        name: "Credentials",
         credentials: {
-          username: { label: 'Username', type: 'text', placeholder: 'jsmith' },
-          password: { label: 'Password', type: 'password' },
+          username: { label: "Username", type: "text", placeholder: "jsmith" },
+          password: { label: "Password", type: "password" },
         },
         async authorize(credentials, req) {
           const { user, accessToken } = await request.post(
@@ -25,13 +25,17 @@ const nextAuthOptions = (req: NextApiRequest, res: NextApiResponse) => {
             }
           );
 
-          const serializedCookie = serialize('accessToken', accessToken, config.cookieConfig);
-          res.setHeader('Set-Cookie', serializedCookie);
+          const serializedCookie = serialize(
+            "accessToken",
+            accessToken,
+            config.cookieConfig
+          );
+          res.setHeader("Set-Cookie", serializedCookie);
 
           try {
             setToken(accessToken);
           } catch (e) {
-            console.log('e', e);
+            console.log("e", e);
           }
 
           return user;
@@ -48,12 +52,12 @@ const nextAuthOptions = (req: NextApiRequest, res: NextApiResponse) => {
           }
         );
         setToken();
-        const serializedCookie = serialize('accessToken', null, {
+        const serializedCookie = serialize("accessToken", null, {
           ...config.cookieConfig,
           maxAge: 0,
         });
 
-        res.setHeader('Set-Cookie', serializedCookie);
+        res.setHeader("Set-Cookie", serializedCookie);
       },
     },
     callbacks: {
@@ -66,11 +70,23 @@ const nextAuthOptions = (req: NextApiRequest, res: NextApiResponse) => {
         // Parse the cookie header into an object
         const cookies = cookieHeader ? parse(cookieHeader) : {};
 
-        const { user } = await request.get(`${process.env.NEXT_PUBLIC_AUTH_URL}/api/auth/session`, {
-          headers: {
-            accessToken: cookies.accessToken,
-          },
-        });
+        const { user } = await request.get(
+          `${process.env.NEXT_PUBLIC_AUTH_URL}/api/auth/session`,
+          {
+            headers: {
+              accessToken: cookies.accessToken,
+            },
+          }
+        );
+
+        if (cookies.accessToken) {
+          const serializedCookie = serialize(
+            "accessToken",
+            accessToken,
+            config.cookieConfig
+          );
+          res.setHeader("Set-Cookie", serializedCookie);
+        }
 
         if (user?.id) {
           return { user };
@@ -86,14 +102,14 @@ const nextAuthOptions = (req: NextApiRequest, res: NextApiResponse) => {
 };
 
 export default (req, res) => {
-  const cookieHeader = req.headers.cookie;
+  // const cookieHeader = req.headers.cookie;
 
-  // Parse the cookie header into an object
-  const cookies = cookieHeader ? parse(cookieHeader) : {};
+  // // Parse the cookie header into an object
+  // const cookies = cookieHeader ? parse(cookieHeader) : {};
 
-  setToken(cookies.accessToken || cookies.accesstoken);
+  // setToken(cookies.accessToken || cookies.accesstoken);
 
-  console.log('cookie', cookies.accessToken || cookies.accesstoken);
+  // console.log('cookie', cookies.accessToken || cookies.accesstoken);
 
   return NextAuth(req, res, nextAuthOptions(req, res));
 };
