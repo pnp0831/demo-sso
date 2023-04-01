@@ -12,9 +12,8 @@ export default function Home() {
   useEffect(() => {
     window.addEventListener("message", function (event) {
       // Kiểm tra xem thông điệp được gửi từ iframe cha
-
       // Xử lý thông điệp được gửi từ iframe cha
-      console.log(event.data);
+      // console.log(event.data);
     });
   }, []);
 
