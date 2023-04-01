@@ -6,15 +6,15 @@ interface Config {
 }
 
 const config: Config = {
-  baseUrl: 'https://641031d1864814e5b649fc8e.mockapi.io/api',
+  baseUrl: "https://641031d1864814e5b649fc8e.mockapi.io/api",
   timeout: 10000,
   limit: 8,
   cookieConfig: {
-    path: '/',
+    path: "/",
     domain:
-      process.env.NODE_ENV === 'development'
-        ? 'localhost'
-        : PROCESS.ENV.NEXT_DOMAIN || '.vercel.app',
+      process.env.NODE_ENV === "development"
+        ? "localhost"
+        : process.env.NEXT_DOMAIN || ".vercel.app",
     httpOnly: false,
   },
 };
