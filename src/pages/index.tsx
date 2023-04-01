@@ -1,10 +1,22 @@
 import { useSession, signIn, signOut, getCsrfToken } from "next-auth/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export default function Home() {
   const { data: session = {}, status } = useSession();
 
+  // const session = {};
+  // const status = "";
+
   const [formValue, setFormValue] = useState({});
+
+  useEffect(() => {
+    window.addEventListener("message", function (event) {
+      // Kiểm tra xem thông điệp được gửi từ iframe cha
+
+      // Xử lý thông điệp được gửi từ iframe cha
+      console.log(event.data);
+    });
+  }, []);
 
   if (status === "authenticated") {
     return (
@@ -91,11 +103,12 @@ export default function Home() {
         style={{ margin: "10px 0" }}
         onClick={() => {
           // window.location.href = `${process.env.NEXT_PUBLIC_AUTH_URL}/auth/signin?callbackUrl=${window.location.href}`;
-          signIn("credentials", {
-            username: formValue.username,
-            password: formValue.password,
-            redirect: false,
-          });
+          // signIn("credentials", {
+          //   username: formValue.username,
+          //   password: formValue.password,
+          //   redirect: false,
+          // });
+          signIn();
         }}
       >
         Sign In
