@@ -9,6 +9,7 @@ import { NextApiRequest, NextApiResponse } from "next";
 
 const nextAuthOptions = (req: NextApiRequest, res: NextApiResponse) => {
   return {
+    secret: process.env.NEXTAUTH_SECRET,
     providers: [
       GoogleProvider({
         clientId: process.env.GOOGLE_CLIENT_ID,
