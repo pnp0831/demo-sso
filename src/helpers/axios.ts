@@ -1,18 +1,13 @@
-import axios from "axios";
+import axios from 'axios';
+import config from '~/constants/config';
 
 const request = axios.create();
 
-const defaultHeaders = {
-  "Content-Type": "application/json",
+export const defaultHeaders = {
+  'Content-Type': 'application/json',
 };
 
-// const setToken = (token) => {
-//   defaultHeaders.cookie = token;
-// };
-
-export { defaultHeaders };
-
-export const setToken = (token = "") => {
+export const setToken = (token = '') => {
   defaultHeaders.token = token;
 };
 

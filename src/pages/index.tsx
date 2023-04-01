@@ -58,9 +58,8 @@ export default function Home() {
         flexDirection: "column",
       }}
     >
-      <h1>SSO</h1>
-      <div>{JSON.stringify(process.env)}</div>
-      <div style={{ margin: "10px 0" }}>
+      <h1>Sign In</h1>
+      {/* <div style={{ margin: "10px 0" }}>
         <label style={{ marginRight: "10px" }} for="username">
           Username:
         </label>
@@ -87,10 +86,11 @@ export default function Home() {
             setFormValue({ ...formValue, password: e.target.value })
           }
         />
-      </div>
+      </div> */}
       <button
         style={{ margin: "10px 0" }}
         onClick={() => {
+          // window.location.href = `${process.env.NEXT_PUBLIC_AUTH_URL}/auth/signin?callbackUrl=${window.location.href}`;
           signIn("credentials", {
             username: formValue.username,
             password: formValue.password,
