@@ -27,7 +27,13 @@ function HomePage({ session }) {
         />
         <h2 style={{ marginBottom: "10px" }}>{session?.user?.name}</h2>
         <p style={{ marginBottom: "10px" }}>{session?.user?.email}</p>
-        <button style={{ marginBottom: "10px" }} onClick={() => signOut()}>
+        <button
+          style={{ marginBottom: "10px" }}
+          onClick={() => {
+            deleteCookie("accessToken");
+            signOut();
+          }}
+        >
           Logout
         </button>
         <button
