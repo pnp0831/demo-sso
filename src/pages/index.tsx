@@ -7,7 +7,7 @@ import { setCookie, deleteCookie, getCookie } from "cookies-next";
 import { parse } from "cookie";
 
 function HomePage({ session }) {
-  console.log("session", session);
+  const a = useSession();
 
   if (session?.user) {
     return (
@@ -31,7 +31,8 @@ function HomePage({ session }) {
           style={{ marginBottom: "10px" }}
           onClick={() => {
             deleteCookie("accessToken");
-            signOut();
+            console.log("doc", document.cookie);
+            signOut({});
           }}
         >
           Logout
@@ -105,9 +106,7 @@ export async function getServerSideProps(context) {
 
   let session = null;
 
-  console.log("user", user);
-
-  if (user?.accessToken) {
+  if (user?.accessToken && cookies["next-auth.session-token"]) {
     session = {
       user,
       expires: user.expired,
