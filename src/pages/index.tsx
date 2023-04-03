@@ -4,6 +4,7 @@ import request from "~/helpers/axios";
 import DeviceDetector from "device-detector-js";
 import { SessionProvider } from "next-auth/react";
 import { setCookie, deleteCookie, getCookie } from "cookies-next";
+import { parse } from "cookie";
 
 function HomePage() {
   const { data: session = {}, status } = useSession();
@@ -84,7 +85,7 @@ const parseUserAgent = (userAgent) => {
 export async function getServerSideProps(context) {
   const { req, res } = context;
 
-  const cookie = getCookie("accessToken");
+  const cookies = parse(req.headers.cookie || "");
 
   const deviceId = parseUserAgent(req.headers["user-agent"]).client?.name;
 
@@ -93,14 +94,15 @@ export async function getServerSideProps(context) {
     {
       headers: {
         deviceId,
+        accessToken: cookies["accessToken"] || "",
       },
     }
   );
 
-  console.log("server side props", cookie);
+  let session = null;
+
   console.log("user", user);
 
-  let session = null;
   if (user?.accessToken) {
     session = {
       user,
@@ -109,7 +111,7 @@ export async function getServerSideProps(context) {
 
     res.setHeader("Set-Cookie", [`accessToken=${user.accessToken}`]);
   } else {
-    deleteCookie("accessToken");
+    res.setHeader("Set-Cookie", [`accessToken=; Max-Age=0`]);
   }
 
   return {
