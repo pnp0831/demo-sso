@@ -3,13 +3,14 @@ import { useEffect, useState } from "react";
 import request from "~/helpers/axios";
 import DeviceDetector from "device-detector-js";
 import { SessionProvider } from "next-auth/react";
+import { setCookie, deleteCookie } from "cookies-next";
 
 function HomePage() {
   const { data: session = {}, status } = useSession();
 
   useEffect(() => {}, []);
 
-  if (status === "authenticated") {
+  if (session?.user) {
     return (
       <div
         style={{
@@ -90,6 +91,8 @@ export async function getServerSideProps(context) {
     };
 
     res.setHeader("Set-Cookie", [`accessToken=${user.accessToken}`]);
+  } else {
+    deleteCookie("accessToken");
   }
 
   return {
