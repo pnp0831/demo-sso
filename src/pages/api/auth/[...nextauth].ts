@@ -21,7 +21,7 @@ const authOptions = {
         email: profile.email,
         id: profile.sub,
         userId,
-        accessToken: account.accessToken,
+        accessToken: account.access_token,
       };
 
       await request.post(
