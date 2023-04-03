@@ -8,7 +8,7 @@ import { setCookie, deleteCookie } from "cookies-next";
 function HomePage() {
   const { data: session = {}, status } = useSession();
 
-  useEffect(() => {}, []);
+  console.log("session", session, status);
 
   if (session?.user) {
     return (
