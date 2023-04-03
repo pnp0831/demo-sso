@@ -18,22 +18,26 @@ function HomePage() {
           justifyContent: "center",
           alignItems: "center",
           flexDirection: "column",
+          padding: "50px",
         }}
       >
-        Signed in as{" "}
-        <strong>{session?.user?.email || session?.user?.name}</strong>
-        <div style={{ margin: "10px 0" }}>
-          <button onClick={() => signOut({ redirect: false })}>Signout</button>
-        </div>
-        <div style={{ margin: "10px 0" }}>
-          <button
-            onClick={() => {
-              window.open(process.env.NEXT_PUBLIC_LANDING_PAGE_URL, "_blank");
-            }}
-          >
-            Go To Landing Page
-          </button>
-        </div>
+        <img
+          style={{ marginBottom: "10px" }}
+          src={session?.user?.image}
+          alt={session?.user?.name}
+        />
+        <h2 style={{ marginBottom: "10px" }}>{session?.user?.name}</h2>
+        <p style={{ marginBottom: "10px" }}>{session?.user?.email}</p>
+        <button style={{ marginBottom: "10px" }} onClick={() => signOut()}>
+          Logout
+        </button>
+        <button
+          onClick={() => {
+            window.open(process.env.NEXT_PUBLIC_LANDING_PAGE_URL, "_blank");
+          }}
+        >
+          Go To Landing Page
+        </button>
       </div>
     );
   }
@@ -56,6 +60,14 @@ function HomePage() {
         }}
       >
         Sign In
+      </button>
+
+      <button
+        onClick={() => {
+          window.open(process.env.NEXT_PUBLIC_LANDING_PAGE_URL, "_blank");
+        }}
+      >
+        Go To Landing Page
       </button>
     </div>
   );

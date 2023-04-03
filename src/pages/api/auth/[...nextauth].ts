@@ -1,18 +1,10 @@
 import NextAuth from "next-auth";
 import Auth0Provider from "next-auth/providers/auth0";
+import GoogleProvider from "next-auth/providers/google";
 import type { NextApiRequest, NextApiResponse } from "next";
 import request from "~/helpers/axios";
-import DeviceDetector from "device-detector-js";
-import { parse } from "cookie";
 import { setCookie, deleteCookie } from "cookies-next";
-
-const parseUserAgent = (userAgent) => {
-  const deviceDetector = new DeviceDetector();
-
-  const device = deviceDetector.parse(userAgent);
-
-  return device;
-};
+import { parseUserAgent } from "~/helpers";
 
 const authOptions = (req, res) => ({
   // Configure one or more authentication providers
@@ -22,8 +14,18 @@ const authOptions = (req, res) => ({
       clientSecret: process.env.AUTH0_CLIENT_SECRET,
       issuer: process.env.AUTH0_ISSUER_BASE_URL,
     }),
+    GoogleProvider({
+      clientId: process.env.GOOGLE_CLIENT_ID,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+      authorization: {
+        params: {
+          prompt: "consent",
+          access_type: "offline",
+          response_type: "code",
+        },
+      },
+    }),
   ],
-
   events: {
     async signOut({ token }) {
       const userId = token.sub;
