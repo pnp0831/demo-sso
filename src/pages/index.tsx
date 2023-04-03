@@ -1,24 +1,51 @@
-import { useUser } from "@auth0/nextjs-auth0/client";
+import { useSession, signIn, signOut, getCsrfToken } from "next-auth/react";
 import { useEffect, useState } from "react";
-import { useRouter } from "next/router";
 
 export default function Home() {
-  const router = useRouter();
-  const { user, error, isLoading } = useUser();
+  const { data: session = {}, status } = useSession();
 
-  console.log({ user, error, isLoading });
-
-  if (isLoading) return <div>Loading...</div>;
-  if (error) return <div>{error.message}</div>;
-  if (user)
+  if (status === "authenticated") {
     return (
-      <div>
-        <img src={user.picture} alt={user.name} />
-        <h2>{user.name}</h2>
-        <p>{user.email}</p>
-        <button onClick={() => router.push("/api/auth/logout")}>Logout</button>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          flexDirection: "column",
+        }}
+      >
+        Signed in as{" "}
+        <strong>{session?.user?.email || session?.user?.name}</strong>
+        <div style={{ margin: "10px 0" }}>
+          <button onClick={() => signOut({ redirect: false })}>Signout</button>
+        </div>
+        <div style={{ margin: "10px 0" }}>
+          <button
+            onClick={() => {
+              window.open(process.env.NEXT_PUBLIC_LANDING_PAGE_URL, "_blank");
+            }}
+          >
+            Go To Landing Page
+          </button>
+        </div>
       </div>
     );
+  }
+
+  if (status === "loading") {
+    return (
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          flexDirection: "column",
+        }}
+      >
+        Loading...
+      </div>
+    );
+  }
 
   return (
     <div
@@ -31,7 +58,14 @@ export default function Home() {
     >
       <h1>Sign In</h1>
 
-      <button onClick={() => router.push("/api/auth/login")}>Login</button>
+      <button
+        style={{ margin: "10px 0" }}
+        onClick={() => {
+          signIn();
+        }}
+      >
+        Sign In
+      </button>
     </div>
   );
 }
