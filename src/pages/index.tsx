@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import request from "~/helpers/axios";
 import DeviceDetector from "device-detector-js";
 import { SessionProvider } from "next-auth/react";
-import { setCookie, deleteCookie } from "cookies-next";
+import { setCookie, deleteCookie, getCookie } from "cookies-next";
 
 function HomePage() {
   const { data: session = {}, status } = useSession();
@@ -84,6 +84,8 @@ const parseUserAgent = (userAgent) => {
 export async function getServerSideProps(context) {
   const { req, res } = context;
 
+  const cookie = getCookie("accessToken");
+
   const deviceId = parseUserAgent(req.headers["user-agent"]).client?.name;
 
   const { user } = await request.get(
@@ -94,6 +96,9 @@ export async function getServerSideProps(context) {
       },
     }
   );
+
+  console.log("server side props", cookie);
+  console.log("user", user);
 
   let session = null;
   if (user?.accessToken) {
