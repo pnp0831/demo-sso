@@ -1,7 +1,10 @@
 import { useSession, signIn, signOut, getCsrfToken } from "next-auth/react";
 import { useEffect, useState } from "react";
+import request from "~/helpers/axios";
+import DeviceDetector from "device-detector-js";
+import { SessionProvider } from "next-auth/react";
 
-export default function Home() {
+function HomePage() {
   const { data: session = {}, status } = useSession();
 
   useEffect(() => {}, []);
@@ -34,21 +37,6 @@ export default function Home() {
     );
   }
 
-  if (status === "loading") {
-    return (
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          flexDirection: "column",
-        }}
-      >
-        Loading...
-      </div>
-    );
-  }
-
   return (
     <div
       style={{
@@ -69,5 +57,52 @@ export default function Home() {
         Sign In
       </button>
     </div>
+  );
+}
+
+const parseUserAgent = (userAgent) => {
+  const deviceDetector = new DeviceDetector();
+
+  const device = deviceDetector.parse(userAgent);
+
+  return device;
+};
+
+export async function getServerSideProps(context) {
+  const { req, res } = context;
+
+  const deviceId = parseUserAgent(req.headers["user-agent"]).client?.name;
+
+  const { user } = await request.get(
+    `${process.env.NEXT_PUBLIC_AUTH_URL}/api/auth/session`,
+    {
+      headers: {
+        deviceId,
+      },
+    }
+  );
+
+  let session = null;
+  if (user?.accessToken) {
+    session = {
+      user,
+      expires: user.expired,
+    };
+
+    res.setHeader("Set-Cookie", [`accessToken=${user.accessToken}`]);
+  }
+
+  return {
+    props: {
+      session,
+    }, // will be passed to the page component as props
+  };
+}
+
+export default function Home({ session }) {
+  return (
+    <SessionProvider session={session}>
+      <HomePage />
+    </SessionProvider>
   );
 }
