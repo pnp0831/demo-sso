@@ -107,6 +107,7 @@ export async function getServerSideProps(context) {
   let session = null;
 
   console.log("cookies", cookies["next-auth.session-token"]);
+  console.log("213", cookies);
   console.log("user", user.accessToken);
 
   if (user?.accessToken && cookies["next-auth.session-token"]) {
