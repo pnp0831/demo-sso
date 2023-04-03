@@ -106,11 +106,16 @@ export async function getServerSideProps(context) {
 
   let session = null;
 
+  const nextCookie =
+    cookies["__Secure-next-auth.session-token"] ||
+    cookies["next-auth.session-token"];
+
   console.log("cookies", cookies["next-auth.session-token"]);
   console.log("213", cookies);
   console.log("user", user.accessToken);
+  console.log("cookie", cookies["__Secure-next-auth.session-token"]);
 
-  if (user?.accessToken && cookies["next-auth.session-token"]) {
+  if (user?.accessToken && nextCookie) {
     session = {
       user,
       expires: user.expired,
