@@ -6,10 +6,8 @@ import { SessionProvider } from "next-auth/react";
 import { setCookie, deleteCookie, getCookie } from "cookies-next";
 import { parse } from "cookie";
 
-function HomePage() {
-  const { data: session = {}, status } = useSession();
-
-  console.log("session", session, status);
+function HomePage({ session }) {
+  console.log("session", session);
 
   if (session?.user) {
     return (
@@ -123,8 +121,8 @@ export async function getServerSideProps(context) {
 
 export default function Home({ session }) {
   return (
-    <SessionProvider session={session}>
-      <HomePage />
+    <SessionProvider>
+      <HomePage session={session} />
     </SessionProvider>
   );
 }

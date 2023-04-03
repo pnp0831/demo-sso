@@ -21,6 +21,9 @@ const authOptions = (req, res) => ({
     }),
   ],
   events: {
+    async session(a) {
+      console.log("a", a);
+    },
     async signOut({ token }) {
       const userId = token.sub;
       const deviceId = parseUserAgent(req.headers["user-agent"]).client?.name;
