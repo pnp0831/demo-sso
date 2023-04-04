@@ -7,7 +7,26 @@ import { setCookie, deleteCookie, getCookie } from "cookies-next";
 import { parse } from "cookie";
 
 function HomePage({ session }) {
-  const a = useSession();
+  const nextAuthSession = useSession();
+  console.log("nextAuthSession", nextAuthSession);
+  console.log("session", session);
+
+  const logout = async () => {
+    const csrtToken = await getCsrfToken();
+
+    deleteCookie("accessToken");
+
+    console.log("logout", nextAuthSession);
+
+    if (nextAuthSession?.status !== "authenticated") {
+      await request.post("/api/auth/logout", {
+        csrtToken,
+        userId: session?.user?.userId,
+      });
+    }
+
+    signOut({ redirect: false });
+  };
 
   if (session?.user) {
     return (
@@ -27,14 +46,7 @@ function HomePage({ session }) {
         />
         <h2 style={{ marginBottom: "10px" }}>{session?.user?.name}</h2>
         <p style={{ marginBottom: "10px" }}>{session?.user?.email}</p>
-        <button
-          style={{ marginBottom: "10px" }}
-          onClick={() => {
-            deleteCookie("accessToken");
-            console.log("doc", document.cookie);
-            signOut({});
-          }}
-        >
+        <button style={{ marginBottom: "10px" }} onClick={logout}>
           Logout
         </button>
         <button
@@ -55,19 +67,14 @@ function HomePage({ session }) {
         justifyContent: "center",
         alignItems: "center",
         flexDirection: "column",
+        padding: "50px",
       }}
     >
-      <h1>Sign In</h1>
+      <h1 style={{ marginBottom: "50px" }}>Sign In</h1>
 
-      <button
-        style={{ margin: "10px 0" }}
-        onClick={() => {
-          signIn();
-        }}
-      >
-        Sign In
+      <button style={{ margin: "10px 0" }} onClick={() => signIn()}>
+        Login
       </button>
-
       <button
         onClick={() => {
           window.open(process.env.NEXT_PUBLIC_LANDING_PAGE_URL, "_blank");
@@ -110,10 +117,7 @@ export async function getServerSideProps(context) {
     cookies["__Secure-next-auth.session-token"] ||
     cookies["next-auth.session-token"];
 
-  console.log("cookies", cookies["next-auth.session-token"]);
-  console.log("213", cookies);
-  console.log("user", user.accessToken);
-  console.log("cookie", cookies["__Secure-next-auth.session-token"]);
+  console.log("server");
 
   if (user?.accessToken) {
     session = {
