@@ -25,7 +25,7 @@ function HomePage({ session }) {
       });
       window.location.reload();
     } else {
-      signOut({ redirect: false });
+      signOut();
     }
   };
 
