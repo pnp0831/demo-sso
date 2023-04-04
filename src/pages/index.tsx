@@ -18,14 +18,15 @@ function HomePage({ session }) {
 
     console.log("logout", nextAuthSession);
 
-    if (nextAuthSession?.status !== "authenticated") {
+    if (nextAuthSession?.status === "unauthenticated") {
       await request.post("/api/auth/logout", {
         csrtToken,
         userId: session?.user?.userId,
       });
+      window.location.reload();
+    } else {
+      signOut({ redirect: false });
     }
-
-    signOut({ redirect: false });
   };
 
   if (session?.user) {
